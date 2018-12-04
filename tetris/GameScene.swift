@@ -35,13 +35,13 @@ class GameScene: SKScene {
         
         anchorPoint = CGPoint(x: 0, y: 1.0)
         
-        let background = SKSpriteNode(imageNamed: "background")
+        let background = SKSpriteNode(imageNamed: "Images/background")
         background.position = CGPoint(x: 0, y: 0)
         background.anchorPoint = CGPoint(x: 0, y: 1.0)
         addChild(background)
         addChild(gameLayer)
         
-        let gameBoardTexture = SKTexture(imageNamed: "gameboard")
+        let gameBoardTexture = SKTexture(imageNamed: "Images/gameboard")
         let gameBoard = SKSpriteNode(texture: gameBoardTexture, size: CGSize(width: BlockSize * CGFloat(NumColumns), height: BlockSize * CGFloat(NumRows)))
         gameBoard.anchorPoint = CGPoint(x:0, y:1.0)
         gameBoard.position = LayerPosition
@@ -49,7 +49,14 @@ class GameScene: SKScene {
         shapeLayer.position = LayerPosition
         shapeLayer.addChild(gameBoard)
         gameLayer.addChild(shapeLayer)
+        
+        run(SKAction.repeatForever(SKAction.playSoundFileNamed("Sounds/theme.mp3", waitForCompletion: true)))
     }
+    
+    func playSound(sound:String) {
+        run(SKAction.playSoundFileNamed(sound, waitForCompletion: false))
+    }
+    
     override func didMove(to view: SKView) {
         
         // Get label node from scene and store it for use later
@@ -73,6 +80,58 @@ class GameScene: SKScene {
         }
     }
     
+    func animateCollapsingLines(linesToRemove: Array<Array<Block>>, fallenBlocks: Array<Array<Block>>, completion:@escaping () -> ()) {
+        var longestDuration: TimeInterval = 0
+        // #2
+        for (columnIdx, column) in fallenBlocks.enumerated() {
+            for (blockIdx, block) in column.enumerated() {
+                let newPosition = pointForColumn(column: block.column, row: block.row)
+                let sprite = block.sprite!
+                // #3
+                let delay = (TimeInterval(columnIdx) * 0.05) + (TimeInterval(blockIdx) * 0.05)
+                let duration = TimeInterval(((sprite.position.y - newPosition.y) / BlockSize) * 0.1)
+                let moveAction = SKAction.move(to: newPosition, duration: duration)
+                moveAction.timingMode = .easeOut
+                sprite.run(
+                    SKAction.sequence([
+                        SKAction.wait(forDuration: delay),
+                        moveAction]))
+                longestDuration = max(longestDuration, duration + delay)
+            }
+        }
+        
+        for rowToRemove in linesToRemove {
+            for block in rowToRemove {
+                // #4
+                let randomRadius = CGFloat(UInt(arc4random_uniform(400) + 100))
+                let goLeft = arc4random_uniform(100) % 2 == 0
+                
+                var point = pointForColumn(column: block.column, row: block.row)
+                point = CGPoint(x: point.x + (goLeft ? -randomRadius : randomRadius), y: point.y)
+                
+                let randomDuration = TimeInterval(arc4random_uniform(2)) + 0.5
+                // #5
+                var startAngle = CGFloat(M_PI)
+                var endAngle = startAngle * 2
+                if goLeft {
+                    endAngle = startAngle
+                    startAngle = 0
+                }
+                let archPath = UIBezierPath(arcCenter: point, radius: randomRadius, startAngle: startAngle, endAngle: endAngle, clockwise: goLeft)
+                let archAction = SKAction.follow(archPath.cgPath, asOffset: false, orientToPath: true, duration: randomDuration)
+                archAction.timingMode = .easeIn
+                let sprite = block.sprite!
+                // #6
+                sprite.zPosition = 100
+                sprite.run(
+                    SKAction.sequence(
+                        [SKAction.group([archAction, SKAction.fadeOut(withDuration: TimeInterval(randomDuration))]),
+                         SKAction.removeFromParent()]))
+            }
+        }
+        // #7
+        run(SKAction.wait(forDuration: longestDuration), completion:completion)
+    }
     
     func touchDown(atPoint pos : CGPoint) {
         if let n = self.spinnyNode?.copy() as! SKShapeNode? {
