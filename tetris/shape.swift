@@ -6,7 +6,6 @@
 //  Copyright © 2018 Jake Doss. All rights reserved.
 //
 
-import Foundation
 import SpriteKit
 
 let NumOrientations: UInt32 = 4

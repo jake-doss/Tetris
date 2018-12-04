@@ -35,7 +35,7 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
                     panPointReference = currentPoint
                 }
             }
-        } else if sender.state == .began {
+        } else {
             panPointReference = currentPoint
         }
     }
@@ -44,10 +44,10 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
         swiftris.dropShape()
     }
     
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailByGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer is UISwipeGestureRecognizer {
             if otherGestureRecognizer is UIPanGestureRecognizer {
                 return true

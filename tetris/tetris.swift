@@ -6,7 +6,7 @@
 //  Copyright © 2018 Jake Doss. All rights reserved.
 //
 
-import Foundation
+
 let NumColumns = 10
 let NumRows = 20
 
