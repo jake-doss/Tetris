@@ -60,6 +60,8 @@
                         <viewLayoutGuide key="safeArea" id="4qk-I5-YsI"/>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="KZW-5F-I5W" appends="YES" id="MJR-IE-gQn"/>
+                            <outletCollection property="gestureRecognizers" destination="O31-zx-12N" appends="YES" id="aS2-Rq-XCZ"/>
+                            <outletCollection property="gestureRecognizers" destination="E68-FP-MX6" appends="YES" id="8Qf-OX-mqr"/>
                         </connections>
                     </view>
                     <connections>
@@ -77,11 +79,13 @@
                 <panGestureRecognizer minimumNumberOfTouches="1" id="O31-zx-12N">
                     <connections>
                         <action selector="didPan:" destination="BV1-FR-VrT" id="ghE-aG-NPo"/>
+                        <outlet property="delegate" destination="BV1-FR-VrT" id="sWI-7a-N7g"/>
                     </connections>
                 </panGestureRecognizer>
                 <swipeGestureRecognizer direction="down" id="E68-FP-MX6">
                     <connections>
                         <action selector="didSwipe:" destination="BV1-FR-VrT" id="PBe-u9-hh7"/>
+                        <outlet property="delegate" destination="BV1-FR-VrT" id="112-pO-OOo"/>
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
